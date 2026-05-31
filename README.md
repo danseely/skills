@@ -1,0 +1,39 @@
+# skills
+
+A small collection of agent skills I use day-to-day. Harness-agnostic: each skill is just a folder with a `SKILL.md` (and optional assets), portable across any agent runtime that supports the SKILL convention — Claude Code, Codex, Cursor, etc.
+
+## What's a skill?
+
+A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `description`) and a body the agent loads as instructions when the skill is invoked. Optional sibling files (scripts, templates, references) live alongside.
+
+```
+<skill-name>/
+  SKILL.md          # frontmatter + agent instructions
+  assets/           # optional: scripts, templates, etc.
+```
+
+## Skills in this repo
+
+| Skill | What it does |
+|---|---|
+| [`planning-handoff`](./planning-handoff) | Durable project state across sessions — state machine over GitHub issues (preferred) or repo docs, with checkpoints, drift checks, and a feature-status vocabulary. |
+| [`md`](./md) | Render markdown to a styled HTML page in the user's browser, using GitHub's `/markdown` API for the real GFM pipeline (tables, task lists, syntax highlighting). |
+
+## Installing
+
+How you install depends on your agent harness:
+
+- **Claude Code:** drop the skill folder into `~/.claude/skills/<name>/` (user-scope) or `<project>/.claude/skills/<name>/` (project-scope).
+- **Codex / others:** consult your runtime's docs for the skills directory.
+
+A common pattern is to clone this repo and symlink individual skills into the runtime's skills directory, so updates from `git pull` propagate.
+
+```sh
+git clone https://github.com/danseely/skills.git ~/src/skills
+ln -s ~/src/skills/md ~/.claude/skills/md
+ln -s ~/src/skills/planning-handoff ~/.claude/skills/planning-handoff
+```
+
+## License
+
+[MIT](./LICENSE)

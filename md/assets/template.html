@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Output</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-syntax-light@0.5.0/lib/github-light.css" media="(prefers-color-scheme: light)">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-syntax-dark@0.5.0/lib/github-dark.css" media="(prefers-color-scheme: dark)">
+  <style>
+    body {
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 1012px;
+      margin: 0 auto;
+      padding: 32px 48px;
+      background-color: var(--bgColor-default, var(--color-canvas-default, #fff));
+      color-scheme: light dark;
+    }
+    @media (max-width: 767px) {
+      body { padding: 16px; }
+    }
+    /* GitHub now wraps tables in a custom element for a11y; make sure
+       it doesn't break the table styling from github-markdown-css. */
+    markdown-accessiblity-table { display: block; }
+    /* Syntax highlight tokens from GitHub's /markdown API use pl-* classes.
+       The github-syntax-{light,dark} stylesheets supply the colors. */
+  </style>
+</head>
+<body>
+  <article class="markdown-body" id="content">{{CONTENT}}</article>
+  <script>
+    // Fallback: if CONTENT was left empty, render markdown client-side with marked.
+    (function () {
+      var el = document.getElementById('content');
+      var raw = {{MARKDOWN_JSON}};
+      if (raw == null) return;
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+      s.onload = function () {
+        marked.setOptions({ gfm: true, breaks: false });
+        el.innerHTML = marked.parse(raw);
+      };
+      document.head.appendChild(s);
+    })();
+  </script>
+</body>
+</html>
