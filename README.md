@@ -16,7 +16,7 @@ A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `descrip
 
 | Skill | What it does |
 |---|---|
-| [`planning-handoff`](./planning-handoff) | Durable project state across sessions — state machine over GitHub issues (preferred) or repo docs, with checkpoints, drift checks, and a feature-status vocabulary. |
+| [`handoff`](./handoff) | Durable project state across sessions — state machine over GitHub issues (preferred) or repo docs, with checkpoints, drift checks, and a feature-status vocabulary. |
 | [`md`](./md) | Render markdown to a styled HTML page in the user's browser, using GitHub's `/markdown` API for the real GFM pipeline (tables, task lists, syntax highlighting). |
 
 ## Installing
@@ -31,7 +31,7 @@ A common pattern is to clone this repo and symlink individual skills into the ru
 ```sh
 git clone https://github.com/danseely/skills.git ~/src/skills
 ln -s ~/src/skills/md ~/.claude/skills/md
-ln -s ~/src/skills/planning-handoff ~/.claude/skills/planning-handoff
+ln -s ~/src/skills/handoff ~/.claude/skills/handoff
 ```
 
 ## License

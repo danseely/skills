@@ -1,10 +1,10 @@
 ---
-name: planning-handoff
-description: This skill should be used when the user asks for "planning-handoff", "handoff", "project state", "status state", "long-running project memory", or "resume context". Also use automatically for multi-session project work, planning checkpoints, project-state capture, feature ledgers, drift detection, or any task likely to span enough scope that chat context may be lost.
-version: 0.2.0
+name: handoff
+description: This skill should be used when the user asks for "handoff", "planning-handoff", "project state", "status state", "long-running project memory", or "resume context". Also use automatically for multi-session project work, planning checkpoints, project-state capture, feature ledgers, drift detection, or any task likely to span enough scope that chat context may be lost.
+version: 0.3.0
 ---
 
-# Planning Handoff
+# Handoff
 
 Use this skill when work needs durable project state outside chat. Skip it for one-shot tasks unless the user explicitly asks for a handoff or planning artifact.
 
