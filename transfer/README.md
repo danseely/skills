@@ -4,9 +4,13 @@ Hand a working session off to a fresh one, and pick it back up — across any pr
 
 Agent context windows have a usable "smart zone" that's far smaller than the advertised limit — past it, responses drift and degrade. The fix is to compress what matters into a small document and continue in a clean session. This skill makes that two-way: **drop** compacts the current conversation into a timestamped file in a global store (`~/.claude/transfers/`), and **pickup** reads the most recent one and resumes from it — even if you dropped it from a different repo.
 
-> **Inspired by [mattpocock/skills/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff)**, with a few deliberate changes: it's named `transfer`, it's bidirectional (drop *and* pickup, not write-only), and files carry a timestamp + lifecycle state so pickup always lands on the right one.
+## Inspired by
 
-> **Not the same as the [`handoff`](../handoff) skill in this repo.** That one is a durable, repo-anchored *state machine* for multi-session feature work (GitHub issues, checkpoints, drift checks). `transfer` is lighter: a disposable per-session briefing you drop and pick up. Use `handoff` to track a project over weeks; use `transfer` to move a single working context from one session to the next.
+[mattpocock/skills/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff), with a few deliberate changes: it's named `transfer`, it's bidirectional (drop *and* pickup, not write-only), and files carry a timestamp + lifecycle state so pickup always lands on the right one.
+
+## Not the same as the `handoff` skill in this repo
+
+[`handoff`](../handoff) is a durable, repo-anchored *state machine* for multi-session feature work (GitHub issues, checkpoints, drift checks). `transfer` is lighter: a disposable per-session briefing you drop and pick up. Use `handoff` to track a project over weeks; use `transfer` to move a single working context from one session to the next.
 
 ## What it does
 
