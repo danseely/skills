@@ -18,7 +18,7 @@ A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `descrip
 |---|---|
 | [`handoff`](./handoff) | Durable project state across sessions — state machine over GitHub issues (preferred) or repo docs, with checkpoints, drift checks, and a feature-status vocabulary. |
 | [`md`](./md) | Render markdown to a styled HTML page in the user's browser, using GitHub's `/markdown` API for the real GFM pipeline (tables, task lists, syntax highlighting). |
-| [`transfer`](./transfer) | Drop or pick up a per-project transfer document so a fresh session can continue work — timestamped files in `.claude/transfers/`, newest wins on pickup. |
+| [`transfer`](./transfer) | Drop or pick up a transfer document so a fresh session can continue work — timestamped files in a global `~/.claude/transfers/` store, shared across projects, newest pending wins on pickup. |
 
 ## Installing
 
