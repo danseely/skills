@@ -6,6 +6,8 @@ Agent context windows have a usable "smart zone" that's far smaller than the adv
 
 Inspired by [mattpocock/skills/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff), with a few deliberate changes: it's named `transfer`, it's bidirectional (drop *and* pickup, not write-only), and files carry a timestamp + lifecycle state so pickup always lands on the right one.
 
+---
+
 **NOTE:** this is separate from the `handoff` skill in this repo
 
 [`handoff`](../handoff) is a durable, repo-anchored *state machine* for multi-session feature work (GitHub issues, checkpoints, drift checks). `transfer` is lighter: a disposable per-session briefing you drop and pick up. Use `handoff` to track a project over weeks; use `transfer` to move a single working context from one session to the next.
