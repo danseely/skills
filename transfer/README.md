@@ -18,7 +18,9 @@ Agent context windows have a usable "smart zone" that's far smaller than the adv
 
 - **Purpose is required.** A transfer is only as good as knowing what the next session is for, so `drop` won't write without a stated purpose — it asks if you didn't give one.
 
-- **Pending vs consumed lifecycle.** A drop is *pending* until a pickup reads it, stamps `Picked up: <ts>`, and moves it into `archive/`. Pickup takes the newest *pending* file in the store, and falls back to the newest archived file when nothing's pending — the "didn't finish last time" case. Files are archived, never auto-deleted.
+- **Pending vs consumed lifecycle.** A drop is *pending* until a pickup reads it, stamps `Picked up: <ts> (into <project>)`, and moves it into `archive/`. Pickup takes the newest *pending* file in the store, and falls back to the newest archived file when nothing's pending — the "didn't finish last time" case. Files are archived, never auto-deleted.
+
+- **Audit trail (informational).** `Origin` records which project dropped a transfer and `Picked up` records which project later consumed it — a data-only trail, not a permission gate. Any pickup can read any pending transfer regardless of origin.
 
 - **Boomerang lineage.** If a session that began with a pickup later drops again, the new file records `Continues: <prior file>` plus a "What changed since pickup" section, so round-trip chains (A → B → back to A) stay traceable.
 
@@ -57,6 +59,7 @@ See the [repo root README](../README.md#installing). The short version: drop or 
 | Timestamped filenames | `transfer-YYYY-MM-DD-HHMMSS.md` sorts by recency, so newest-by-name is newest-by-time. |
 | Purpose required | `drop` won't write without knowing what the next session is for. |
 | Pending → consumed | Pickup stamps and archives the file it reads; never auto-deletes. |
+| Audit trail | `Origin` + `Picked up` record which project dropped and consumed each transfer — info only, not a gate. |
 | Self-actuating | Files open with a preamble so they work in any agent, not just via pickup. |
 | Link, don't restate | Reference artifacts by path/URL; restated content rots. |
 | Redact secrets before writing | Strip API keys, passwords, and PII from the transfer. |

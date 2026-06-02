@@ -125,16 +125,17 @@ it resumed — so the chain stays traceable back to the parent.
      ```
 
    - If neither exists, tell the user there are no transfers in the store and stop.
-3. Read `$latest`. Summarize for the user: when it was written (from the filename timestamp), its **Origin** (which project it came from — relevant now that the store is global), the stated **Purpose**, and the **Next steps**. (Don't block on confirmation — just summarize and proceed, unless the user asked to choose.)
-4. **Mark it consumed.** Stamp the header and archive it so it won't be picked up again and cruft stays contained:
+3. Read `$latest`. Summarize for the user: when it was written (from the filename timestamp), its **Origin** (which project it came from), the project you're picking it up **into** (the current repo/dir), the stated **Purpose**, and the **Next steps**. (Don't block on confirmation — just summarize and proceed, unless the user asked to choose.)
+4. **Mark it consumed.** Stamp the header — timestamp plus the project doing the pickup, as a data-only audit trail — and archive it so it won't be picked up again and cruft stays contained:
 
    ```sh
    ts="$(date +%Y-%m-%d-%H%M%S)"
-   # edit the file: replace "Picked up: (pending)" with "Picked up: <ts>"
+   into="$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
+   # edit the file: replace "Picked up: (pending)" with "Picked up: <ts> (into <into>)"
    mkdir -p "$dir/archive" && mv "$latest" "$dir/archive/"
    ```
 
-   (Files are archived, never deleted. Prune `archive/` by hand whenever you like.)
+   (`Origin` + `Picked up` together record the full trail: which project dropped it, and which picked it up. Files are archived, never deleted — prune `archive/` by hand whenever you like.)
 5. **Remember the lineage.** Note the basename of the file you just picked up. If you later `drop` in this same session, record it as `Continues:` and fill in "What changed since pickup" so the boomerang chain stays traceable.
 6. Invoke any skills listed under "Suggested skills" that are relevant.
 7. Continue the work from where the transfer left off. If a resume note was passed as an argument, prioritize that.
