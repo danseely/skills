@@ -1,17 +1,17 @@
 ---
 name: transfer
-description: Drop or pick up a project transfer document so a fresh agent session can continue work. Use "drop" to compact the current conversation into a timestamped handoff file; use "pick up" to read the most recent transfer for this project and resume. Trigger phrases include "drop a transfer", "hand this off", "save my progress", "pick up where I left off", "resume the last session", "/transfer drop", "/transfer pickup".
+description: Drop or pick up a transfer document so a fresh agent session can continue work. Use "drop" to compact the current conversation into a timestamped handoff file in a global store; use "pick up" to read the most recent transfer and resume — works across projects. Trigger phrases include "drop a transfer", "hand this off", "save my progress", "pick up where I left off", "resume the last session", "/transfer drop", "/transfer pickup".
 argument-hint: "drop | pickup  (optionally: what the next session will focus on)"
 ---
 
 # Transfer
 
-Move working context between sessions for the **current project**. Two modes:
+Move working context between sessions. Two modes:
 
 - **drop** — compact this conversation into a timestamped transfer document.
-- **pickup** — read the most recent transfer for this project and continue the work.
+- **pickup** — read the most recent transfer and continue the work.
 
-Transfers are stored per-project in `.claude/transfers/` (relative to the project root), so pickup only ever sees this project's transfers.
+Transfers are stored in one **global store** (`~/.claude/transfers/`), shared across every project — so you can drop in one repo and pick up in another.
 
 ## Choosing the mode
 
@@ -24,11 +24,10 @@ Transfers are stored per-project in `.claude/transfers/` (relative to the projec
 
 ## Locating the transfers directory
 
-Resolve the project root, then use `<root>/.claude/transfers/`:
+Transfers live in one global store, shared across every project:
 
 ```sh
-root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-dir="$root/.claude/transfers"
+dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/transfers"
 ```
 
 On **drop**, create the directory if needed (`mkdir -p "$dir"`).
@@ -36,15 +35,13 @@ On **drop**, create the directory if needed (`mkdir -p "$dir"`).
 Layout:
 
 ```
-.claude/transfers/
+~/.claude/transfers/
   transfer-YYYY-MM-DD-HHMMSS.md   # pending drops (not yet picked up)
   archive/                        # consumed drops (already picked up)
     transfer-... .md
 ```
 
-A transfer is **pending** while it sits directly in `.claude/transfers/`, and **consumed** once a pickup has read it and moved it into `archive/`. In normal use there is at most one pending file, which is what makes "pick up the latest" unambiguous.
-
-Suggest the user add `.claude/transfers/` to `.gitignore` if these shouldn't be committed (they usually shouldn't — they're scratch context, not source).
+A transfer is **pending** while it sits directly in the store, and **consumed** once a pickup has read it and moved it into `archive/`. Pickup always takes the newest pending file across the whole store, regardless of which project you're in — so each drop records its **origin** (see the template) to keep a global pile legible.
 
 ## Drop
 
@@ -61,10 +58,15 @@ Suggest the user add `.claude/transfers/` to `.gitignore` if these shouldn't be 
    ```
 
    The `YYYY-MM-DD-HHMMSS` format sorts lexicographically by recency, so the last file by name is the newest even if mtimes drift.
-5. Write the transfer document to `$file` using the template below.
-6. **Do not duplicate** content already captured elsewhere (PRDs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
-7. **Redact** anything sensitive — API keys, passwords, tokens, PII.
-8. Report the path written and a one-line summary of what was captured.
+5. **Record the origin** — the repo or directory this drop came from — so a global store stays legible:
+
+   ```sh
+   origin="$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
+   ```
+6. Write the transfer document to `$file` using the template below.
+7. **Do not duplicate** content already captured elsewhere (PRDs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+8. **Redact** anything sensitive — API keys, passwords, tokens, PII.
+9. Report the path written and a one-line summary of what was captured.
 
 ### Transfer file template
 
@@ -80,6 +82,7 @@ Write the file with this structure. The preamble at the top makes the file **sel
 # Transfer: <short title>
 
 - **Created:** <YYYY-MM-DD HH:MM:SS>
+- **Origin:** <repo name or working dir the drop came from>
 - **Purpose:** <what the next session is for>
 - **Continues:** <prior transfer filename, or "none">
 - **Picked up:** (pending)
@@ -121,8 +124,8 @@ it resumed — so the chain stays traceable back to the parent.
      latest="$(ls -1 "$dir"/archive/transfer-*.md 2>/dev/null | sort | tail -n 1)"
      ```
 
-   - If neither exists, tell the user there are no transfers for this project and stop.
-3. Read `$latest`. Summarize for the user: when it was written (from the filename timestamp), the stated **Purpose**, and the **Next steps**. (Don't block on confirmation — just summarize and proceed, unless the user asked to choose.)
+   - If neither exists, tell the user there are no transfers in the store and stop.
+3. Read `$latest`. Summarize for the user: when it was written (from the filename timestamp), its **Origin** (which project it came from — relevant now that the store is global), the stated **Purpose**, and the **Next steps**. (Don't block on confirmation — just summarize and proceed, unless the user asked to choose.)
 4. **Mark it consumed.** Stamp the header and archive it so it won't be picked up again and cruft stays contained:
 
    ```sh
@@ -138,8 +141,13 @@ it resumed — so the chain stays traceable back to the parent.
 
 ### Picking an older transfer
 
-If the user indicates the latest isn't the one they want, list available transfers (pending first, then archived) newest-first and let them choose:
+If the user indicates the latest isn't the one they want, list available transfers (pending first, then archived) newest-first **with their origin and purpose**, since a global store mixes projects together:
 
 ```sh
-ls -1 "$dir"/transfer-*.md "$dir"/archive/transfer-*.md 2>/dev/null | sort -r
+for f in $(ls -1 "$dir"/transfer-*.md "$dir"/archive/transfer-*.md 2>/dev/null | sort -r); do
+  printf '%s\n' "$f"
+  grep -E '^\- \*\*(Origin|Purpose):\*\*' "$f"
+done
 ```
+
+Then let the user choose by origin/purpose rather than guessing from the timestamp alone.

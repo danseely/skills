@@ -1,10 +1,10 @@
 # `transfer`
 
-Hand a working session off to a fresh one, and pick it back up, for a single project.
+Hand a working session off to a fresh one, and pick it back up — across any project.
 
-Agent context windows have a usable "smart zone" that's far smaller than the advertised limit — past it, responses drift and degrade. The fix is to compress what matters into a small document and continue in a clean session. This skill makes that two-way: **drop** compacts the current conversation into a timestamped file under `.claude/transfers/`, and **pickup** reads the most recent one for this project and resumes from it.
+Agent context windows have a usable "smart zone" that's far smaller than the advertised limit — past it, responses drift and degrade. The fix is to compress what matters into a small document and continue in a clean session. This skill makes that two-way: **drop** compacts the current conversation into a timestamped file in a global store (`~/.claude/transfers/`), and **pickup** reads the most recent one and resumes from it — even if you dropped it from a different repo.
 
-> **Inspired by [mattpocock/skills/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff)**, with three deliberate changes: it's named `transfer`, it's bidirectional (drop *and* pickup, not write-only), and files carry a timestamp + lifecycle state so pickup always lands on the right one.
+> **Inspired by [mattpocock/skills/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff)**, with a few deliberate changes: it's named `transfer`, it's bidirectional (drop *and* pickup, not write-only), and files carry a timestamp + lifecycle state so pickup always lands on the right one.
 
 > **Not the same as the [`handoff`](../handoff) skill in this repo.** That one is a durable, repo-anchored *state machine* for multi-session feature work (GitHub issues, checkpoints, drift checks). `transfer` is lighter: a disposable per-session briefing you drop and pick up. Use `handoff` to track a project over weeks; use `transfer` to move a single working context from one session to the next.
 
@@ -12,13 +12,13 @@ Agent context windows have a usable "smart zone" that's far smaller than the adv
 
 - **Two modes.** `drop` writes a transfer document; `pickup` reads the latest and continues. Mode comes from an explicit `drop`/`pickup` argument, is inferred from your phrasing otherwise, and is asked for only when ambiguous.
 
-- **Per-project storage.** Files live in `<repo>/.claude/transfers/`, so pickup only ever sees this project's transfers — no cross-project bleed.
+- **Global storage.** Files live in one shared store, `~/.claude/transfers/`, so you can drop in one repo and pick up in another. Each file records its **origin** project to keep the shared pile legible.
 
 - **Self-actuating files.** Every dropped file opens with a "read me first" preamble, so it works whether picked up by this skill or pasted straight into another agent (Codex, Copilot, a fresh Claude session).
 
 - **Purpose is required.** A transfer is only as good as knowing what the next session is for, so `drop` won't write without a stated purpose — it asks if you didn't give one.
 
-- **Pending vs consumed lifecycle.** A drop is *pending* until a pickup reads it, stamps `Picked up: <ts>`, and moves it into `archive/`. That keeps the newest *pending* file unambiguous (normally there's exactly one), and falls back to the newest archived file when nothing's pending — the "didn't finish last time" case. Files are archived, never auto-deleted.
+- **Pending vs consumed lifecycle.** A drop is *pending* until a pickup reads it, stamps `Picked up: <ts>`, and moves it into `archive/`. Pickup takes the newest *pending* file in the store, and falls back to the newest archived file when nothing's pending — the "didn't finish last time" case. Files are archived, never auto-deleted.
 
 - **Boomerang lineage.** If a session that began with a pickup later drops again, the new file records `Continues: <prior file>` plus a "What changed since pickup" section, so round-trip chains (A → B → back to A) stay traceable.
 
@@ -28,6 +28,7 @@ Agent context windows have a usable "smart zone" that's far smaller than the adv
 
 - You're approaching the context limit and want to continue clean instead of compacting in place.
 - A side task surfaces mid-session that deserves its own pure session.
+- You notice something in repo A that really belongs in repo B — drop it now, pick it up later from B.
 - You want to spin off a prototype or an adversarial review in another agent and feed the learnings back.
 
 ## When to skip it
@@ -52,7 +53,7 @@ See the [repo root README](../README.md#installing). The short version: drop or 
 
 | Convention | One-line summary |
 |---|---|
-| Per-project store | Files live in `<repo>/.claude/transfers/`; pickup is scoped to the current repo. |
+| Global store | Files live in `~/.claude/transfers/`, shared across all projects; each records its origin. |
 | Timestamped filenames | `transfer-YYYY-MM-DD-HHMMSS.md` sorts by recency, so newest-by-name is newest-by-time. |
 | Purpose required | `drop` won't write without knowing what the next session is for. |
 | Pending → consumed | Pickup stamps and archives the file it reads; never auto-deletes. |
