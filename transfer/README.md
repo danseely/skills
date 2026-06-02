@@ -40,7 +40,7 @@ Inspired by [mattpocock/skills/handoff](https://github.com/mattpocock/skills/tre
 ## When to skip it
 
 - One-shot tasks you'll finish in the same session.
-- Durable, multi-week project tracking: reach for [`handoff`](../handoff) instead.
+- Durable, multi-week project tracking: reach for your multi-session harness of choice instead (or try [`handoff`](../handoff)!)
 
 ## Agnostic to agent and harness
 
