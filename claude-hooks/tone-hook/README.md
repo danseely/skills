@@ -19,7 +19,7 @@ Copy the folder somewhere stable (or symlink it) and register the two hooks in `
 
 ```sh
 mkdir -p ~/.claude/tone-hooks
-cp claude-hook/*.sh ~/.claude/tone-hooks/
+cp claude-hooks/tone-hook/*.sh ~/.claude/tone-hooks/
 chmod +x ~/.claude/tone-hooks/*.sh
 ```
 

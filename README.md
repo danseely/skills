@@ -1,6 +1,6 @@
 # skills
 
-A small collection of agent skills I use day-to-day. Skills are harness-agnostic by default: each is just a folder with a `SKILL.md` (and optional assets), portable across any agent runtime that supports the SKILL convention — Claude Code, Codex, Cursor, etc. **Unless a subdirectory says otherwise** — some folders here are harness-specific (e.g. [`claude-hook`](./claude-hook) is Claude Code hooks, not a portable skill). Each such folder's own README states its scope.
+A small collection of agent skills I use day-to-day. Skills are harness-agnostic by default: each is just a folder with a `SKILL.md` (and optional assets), portable across any agent runtime that supports the SKILL convention — Claude Code, Codex, Cursor, etc. **Unless a subdirectory says otherwise** — some folders here are harness-specific (e.g. [`claude-hooks`](./claude-hooks) holds Claude Code hook bundles, not portable skills). Each such folder's own README states its scope.
 
 ## What's a skill?
 
@@ -25,7 +25,7 @@ A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `descrip
 
 | Folder | What it does |
 |---|---|
-| [`claude-hook`](./claude-hook) | Claude Code hooks (not a portable skill) that enforce a no-sycophancy, evidence-grounded response style — a `UserPromptSubmit` injection plus a silent, non-blocking `Stop` logger. See its README for scope and install. |
+| [`claude-hooks`](./claude-hooks) | Claude Code hook bundles (not portable skills), one per subdirectory. Currently [`tone-hook`](./claude-hooks/tone-hook): a no-sycophancy, evidence-grounded response style via a `UserPromptSubmit` injection plus a silent `Stop` logger. |
 
 ## Installing
 
