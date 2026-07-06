@@ -29,9 +29,9 @@ A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `descrip
 |---|---|
 | [`claude-hooks`](./claude-hooks) | Claude Code hook plugins (not portable skills), one per subdirectory. Currently [`tone-hook`](./claude-hooks/tone-hook): a no-sycophancy, evidence-grounded response style via a `UserPromptSubmit` injection plus a silent `Stop` logger. |
 
-## Installing
+## Installing skills
 
-How you install depends on your agent harness:
+How you install a skill depends on your agent harness:
 
 - **Claude Code:** drop the skill folder into `~/.claude/skills/<name>/` (user-scope) or `<project>/.claude/skills/<name>/` (project-scope).
 - **Codex / others:** consult your runtime's docs for the skills directory.
@@ -43,6 +43,44 @@ git clone https://github.com/danseely/skills.git ~/src/skills
 ln -s ~/src/skills/md ~/.claude/skills/md
 ln -s ~/src/skills/handoff ~/.claude/skills/handoff
 ```
+
+## Installing plugins (Claude Code)
+
+The hook plugins under [`claude-hooks`](./claude-hooks) are published through this repo's [`marketplace.json`](./.claude-plugin/marketplace.json). Add the marketplace once, then install any plugin by name:
+
+```
+/plugin marketplace add danseely/skills
+/plugin install tone-hook@skills
+```
+
+Manage them afterward with `/plugin` — enable, disable, or update (`/plugin marketplace update skills` pulls the latest, then `/plugin` to reinstall). Plugin hooks are read at session start, so changes take effect in a new session.
+
+## Migrating from a manual `tone-hook` install
+
+Earlier `tone-hook` was installed by hand: scripts symlinked into `~/.claude/tone-hooks/` and `UserPromptSubmit`/`Stop` entries added to `~/.claude/settings.json`. If you did that, install the plugin (above) **and** remove the manual wiring, or both copies fire and the injection doubles up.
+
+```sh
+# 1. Drop the manually-registered hooks (only the ones pointing at /tone-hooks/).
+S="$HOME/.claude/settings.json"
+cp "$S" "$S.premigrate.bak"
+jq '
+  .hooks.UserPromptSubmit = ((.hooks.UserPromptSubmit // [])
+    | map(select([.hooks[]?.command // ""] | any(contains("/tone-hooks/")) | not))) |
+  .hooks.Stop = ((.hooks.Stop // [])
+    | map(select([.hooks[]?.command // ""] | any(contains("/tone-hooks/")) | not))) |
+  # drop the arrays entirely if now empty
+  if (.hooks.UserPromptSubmit | length) == 0 then del(.hooks.UserPromptSubmit) else . end |
+  if (.hooks.Stop | length) == 0 then del(.hooks.Stop) else . end
+' "$S" > "$S.tmp" && jq empty "$S.tmp" && mv "$S.tmp" "$S"
+
+# 2. Remove the old symlinked scripts.
+rm -f ~/.claude/tone-hooks/user-prompt-submit.sh ~/.claude/tone-hooks/stop.sh
+rmdir ~/.claude/tone-hooks 2>/dev/null || true   # only if now empty
+
+# 3. Restart Claude Code so the removal and the plugin both take effect.
+```
+
+The no-restart mute also moved: use `~/.claude/tone-hook.OFF` (the old path was `~/.claude/tone-hooks/OFF`).
 
 ## License
 
