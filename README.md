@@ -1,6 +1,6 @@
 # skills
 
-A small collection of agent skills I use day-to-day. Harness-agnostic: each skill is just a folder with a `SKILL.md` (and optional assets), portable across any agent runtime that supports the SKILL convention — Claude Code, Codex, Cursor, etc.
+A small collection of agent skills I use day-to-day. Skills are harness-agnostic by default: each is just a folder with a `SKILL.md` (and optional assets), portable across any agent runtime that supports the SKILL convention — Claude Code, Codex, Cursor, etc. **Unless a subdirectory says otherwise** — some folders here are harness-specific (e.g. [`claude-hook`](./claude-hook) is Claude Code hooks, not a portable skill). Each such folder's own README states its scope.
 
 ## What's a skill?
 
@@ -20,6 +20,12 @@ A directory containing a `SKILL.md` file with YAML frontmatter (`name`, `descrip
 | [`md`](./md) | Render markdown to a styled HTML page in the user's browser, using GitHub's `/markdown` API for the real GFM pipeline (tables, task lists, syntax highlighting). |
 | [`transfer`](./transfer) | Drop or pick up a transfer document so a fresh session can continue work — timestamped files in a global `~/.claude/transfers/` store, shared across projects, newest pending wins on pickup. |
 | [`update-mac-app`](./update-mac-app) | Update an unsigned/ad-hoc-signed macOS app to its newest version — resolves the update source (a GitHub release, or a Sparkle appcast feed discovered from the installed bundle's `Info.plist`), downloads the DMG/ZIP, swaps the install (old copy to Trash, never deleted), strips Gatekeeper quarantine, relaunches. Works for an app you only have installed, an `owner/name` repo, or the current repo's app. |
+
+## Harness-specific (not skills)
+
+| Folder | What it does |
+|---|---|
+| [`claude-hook`](./claude-hook) | Claude Code hooks (not a portable skill) that enforce a no-sycophancy, evidence-grounded response style — a `UserPromptSubmit` injection plus a silent, non-blocking `Stop` logger. See its README for scope and install. |
 
 ## Installing
 
