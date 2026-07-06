@@ -55,7 +55,32 @@ The hook plugins under [`claude-hooks`](./claude-hooks) are published through th
 
 Manage them afterward with `/plugin` — enable, disable, or update (`/plugin marketplace update skills` pulls the latest, then `/plugin` to reinstall). Plugin hooks are read at session start, so changes take effect in a new session.
 
-## Migrating from a manual `tone-hook` install
+## Migrating prior installs
+
+If you installed anything from this repo before, here is how to move each item to its current form. All of these assume the repo is cloned at `~/src/skills` (adjust the path to wherever your clone lives).
+
+### Skills installed as plain copies
+
+Early on, skills were sometimes copied into `~/.claude/skills/<name>/` instead of symlinked. A copy does not pick up `git pull`, so it silently goes stale. Replace any copy with a symlink to the clone:
+
+```sh
+name=md                                   # repeat per skill
+mv ~/.claude/skills/$name ~/.claude/skills/$name.bak-copy   # keep the old copy, don't delete
+ln -s ~/src/skills/$name ~/.claude/skills/$name
+# once you've confirmed the symlinked skill works: rm -rf ~/.claude/skills/$name.bak-copy
+```
+
+### Renamed skill: `planning-handoff` → `handoff`
+
+`planning-handoff` was renamed to `handoff`. If you have the old name installed, remove it and install under the new name:
+
+```sh
+mv ~/.claude/skills/planning-handoff ~/.claude/skills/planning-handoff.bak-renamed
+ln -s ~/src/skills/handoff ~/.claude/skills/handoff
+# after confirming: rm -rf ~/.claude/skills/planning-handoff.bak-renamed
+```
+
+### The `tone-hook` plugin (was a manual hook install)
 
 Earlier `tone-hook` was installed by hand: scripts symlinked into `~/.claude/tone-hooks/` and `UserPromptSubmit`/`Stop` entries added to `~/.claude/settings.json`. If you did that, install the plugin (above) **and** remove the manual wiring, or both copies fire and the injection doubles up.
 
