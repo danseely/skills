@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # UserPromptSubmit hook: inject response-discipline rules at the start of every
 # turn (maximally recent, so most reliably followed). Silent — no chatter.
-# Toggle off by creating the OFF sentinel: touch ~/.claude/tone-hooks/OFF
+# Toggle off without disabling the plugin: touch ~/.claude/tone-hook.OFF
 set -euo pipefail
 
-[ -f "$HOME/.claude/tone-hooks/OFF" ] && exit 0
+[ -f "$HOME/.claude/tone-hook.OFF" ] && exit 0
 
 read -r -d '' CTX <<'EOF' || true
 [response discipline active — from a hook, does not repeat per message]

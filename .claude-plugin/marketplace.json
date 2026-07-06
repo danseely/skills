@@ -1,0 +1,15 @@
+{
+  "name": "skills",
+  "description": "Dan Seely's agent skills and Claude Code hook plugins.",
+  "owner": {
+    "name": "Dan Seely"
+  },
+  "plugins": [
+    {
+      "name": "tone-hook",
+      "description": "No-sycophancy, evidence-grounded response discipline: a UserPromptSubmit injection that states the rules each turn plus a silent, non-blocking Stop logger that records banned-phrase hits for tuning.",
+      "source": "./claude-hooks/tone-hook",
+      "category": "workflow"
+    }
+  ]
+}

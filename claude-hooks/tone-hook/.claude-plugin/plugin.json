@@ -1,0 +1,9 @@
+{
+  "name": "tone-hook",
+  "version": "0.1.0",
+  "description": "No-sycophancy, evidence-grounded response discipline for Claude Code, via a UserPromptSubmit injection and a silent, non-blocking Stop violation logger.",
+  "author": {
+    "name": "Dan Seely"
+  },
+  "keywords": ["hooks", "tone", "sycophancy", "response-style", "discipline"]
+}
