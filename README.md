@@ -53,7 +53,7 @@ The hook plugins under [`claude-hooks`](./claude-hooks) are published through th
 /plugin install tone-hook@skills
 ```
 
-Manage them afterward with `/plugin` — enable, disable, or update (`/plugin marketplace update skills` pulls the latest, then `/plugin` to reinstall). Plugin hooks are read at session start, so changes take effect in a new session.
+Manage them afterward with `/plugin`: `/plugin disable` / `/plugin enable`, `/plugin uninstall`, and `/plugin marketplace update skills` to pull the latest followed by `/plugin update tone-hook` to reinstall. Plugin changes apply once the plugin loads — start a new session, or run `/reload-plugins` in the current one.
 
 ## Migrating prior installs
 

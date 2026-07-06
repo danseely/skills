@@ -22,7 +22,7 @@ This plugin is published through the `skills` marketplace (the repo root). Add t
 /plugin install tone-hook@skills
 ```
 
-Hooks are read at session start, so it takes effect in a **new** session, not mid-session. Enable/disable and update through `/plugin`.
+Plugin changes apply once the plugin loads — start a **new** session, or run `/reload-plugins` in the current one. Enable, disable, and update through `/plugin`.
 
 ## Toggle off (without disabling the plugin)
 
